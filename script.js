@@ -43,6 +43,7 @@ window.onload = function() {
     }else{
         //document.getElementById("Loggin").style.display = "block";
     }
+    //console.log(window.location.hash);
     restartToken(window.location.hash);
     
   };
@@ -73,10 +74,4 @@ window.onload = function() {
         console.log(data);
         return data.access_token;
     }; */
-  
-
-
-  
-
-
 //getToken();
