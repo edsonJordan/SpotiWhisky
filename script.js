@@ -1,7 +1,9 @@
 
 
 document.getElementById('search-icon').addEventListener('change', (e) => {
+    const searchInput = document.getElementById('search-input');
     document.getElementById("header").classList.toggle("header_active");
+    document.getElementById("input-search").focus();
 });
 document.getElementById("navigation-icon").addEventListener("change", (e) => {
     document.getElementById("ul__navigation").classList.toggle("ul__navigation--active");
