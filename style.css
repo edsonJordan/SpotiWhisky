@@ -257,7 +257,7 @@ ul{
     padding-right: 1rem;
 }
 .link--tittle::after{
-    content: "\25b6";
+    content: "►";
 
     padding-left: .2rem;
     clip-path: polygon(0% 0%, 0 52%, 0 59%, 74% 21%, 80% 30%, 6% 68%, 0 50%, 0 100%, 100% 100%, 100% 0%);
