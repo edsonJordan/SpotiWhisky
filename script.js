@@ -17,6 +17,24 @@ document.getElementById("button--cancel").addEventListener("click", (e) => {
     e.target.classList.add("none");
 });
 
+document.getElementById("ul__navigation").addEventListener("click", (e) => {
+    let active = document.getElementById("ul__navigation").getElementsByClassName('li__navigation--active')[0];
+    const marker = document.getElementById("li--marker");
+    
+    if (e.target.tagName === "LI") {
+        /* document.getElementById("ul__navigation").classList.add("none"); */
+        active.classList.remove("li__navigation--active");
+        e.target.classList.add("li__navigation--active");
+        let lat = e.target.offsetTop;
+        marker.style.top = (lat-2) + "px";
+    }
+});
+
+function node(lat, lng) {
+    this.lat = lat;
+    this.lng = lng;
+}
+    
 
 
 const CLIENT_ID = "e666d111cbeb49f897e1a05352690b42"; // insert your client id here from spotify
