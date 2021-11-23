@@ -64,7 +64,7 @@ ul{
     grid-template-areas: "header nav"
                          "main  main"
                          "main  main";
-    grid-template-rows: 80px 1fr ;
+    grid-template-rows: 100px 1fr ;
     grid-template-columns: 1.5fr .5fr;
 }
 .header{
@@ -73,11 +73,12 @@ ul{
     height: 30%;
     width: 2rem;
     padding: 15px;
-    margin: 15px;
+    margin: 1.5rem 2rem;
     border-radius: 50%;
     border: .7px solid var(--color-white);
     transition: all 300ms ease-in-out;
     transition-property: width, border-radius;
+
 }
 .header_active{
     justify-content: space-between;
@@ -110,7 +111,7 @@ ul{
     width: 2rem;
     justify-content: center;
     padding: 15px;
-    margin: 15px;
+    margin: 1.5rem 2rem;
     border-radius: 50%;
     border: 1px solid var(--color-white);
   
@@ -119,15 +120,15 @@ ul{
     grid-area: main;
     display: grid;
     gap: .5rem;
-    padding:0 1rem;
+    padding:0 2rem;
 }
 .search-icon{
     display: flex;
     background-image: url(icons/buscar.svg);
     background-repeat: no-repeat;
     background-position: center;
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
 }
 .navigation-icon{
     display: flex;
@@ -200,8 +201,8 @@ ul{
 .section__banner{
     display: flex;
     flex-direction: row;
-    padding-bottom: 2rem;
-    padding-top: 1rem;
+    padding-bottom: 3rem;
+    padding-top: 2rem;
     column-gap: .8rem;
 }
 .section__banner--tittle{
@@ -215,7 +216,7 @@ ul{
 
 .section__banner--img{
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     width: 50%;
 }
@@ -253,6 +254,16 @@ ul{
 .link--tittle{
     align-self: flex-start;
     font-weight: 800;
+    padding-right: 1rem;
+}
+.link--tittle::after{
+    content: "\25b6";
+
+    padding-left: .2rem;
+    clip-path: polygon(0% 0%, 0 52%, 0 59%, 74% 21%, 80% 30%, 6% 68%, 0 50%, 0 100%, 100% 100%, 100% 0%);
+    background: -webkit-linear-gradient(120deg, var(--color-primary), var(--color-secondary), var(--color-white));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 
 }
 .music{
@@ -264,7 +275,12 @@ ul{
     padding-top: .6rem;
 }
 .music{
-    border-bottom: 2px solid rgba(255,255,255,.1);
+    color: white;
+    border-width: 0px 0px 0px 0px;
+    border-bottom: 1px double;
+    border-style: solid;
+    border-image: linear-gradient(to right, transparent 10%, rgba(255,255,255,.5) 25%,rgba(255,255,255,.5) 50%,transparent 90%) 10 10%;
+     
 }
 .music:last-of-type{
     border-bottom: none;
