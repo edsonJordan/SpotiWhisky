@@ -7,6 +7,14 @@ document.getElementById('search-icon').addEventListener('change', (e) => {
 });
 document.getElementById("navigation-icon").addEventListener("change", (e) => {
     document.getElementById("ul__navigation").classList.toggle("ul__navigation--active");
+    document.getElementById("ul__navigation").classList.remove("none");
+    document.getElementById("button--cancel").classList.remove("none");
+});
+document.getElementById("button--cancel").addEventListener("click", (e) => {
+    document.getElementById('navigation-icon').checked = false;
+    document.getElementById("ul__navigation").classList.add("none");
+    document.getElementById("ul__navigation").classList.toggle("ul__navigation--active");
+    e.target.classList.add("none");
 });
 
 
