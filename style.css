@@ -259,11 +259,6 @@ ul{
 .check_search:checked ~ .input-search{
     display: flex;
 }
-
-.check_navigation:checked ~ .navigation-icon{
-  /*   transform: rotate(90deg);
-    transition: transform .5s; */
-}
 .li__navigation{
     text-align: center;
     display: block;
@@ -274,9 +269,6 @@ ul{
     background-position: center;
     padding:  .1rem .1rem;
     cursor: pointer;
-   
-    /* box-shadow: 2px 25px 50px 1px rgb(252 221 253); */
-   
 }
 .li__navigation--active{
     
@@ -308,21 +300,6 @@ ul{
 .li__navigation:nth-child(4){
     background-image: url(icons/busqueda-biblioteca.svg);
 }
-/* .check_navigation ~ .ul__navigation > .li__navigation{
-    animation: LeftLinkRightOut .8s ease-in-out .3s forwards;
-}
-.check_navigation:not(:checked) ~ .ul__navigation>.li__navigation:nth-of-type(1){
-    animation-delay: .2s;    
-}
-.check_navigation:not(:checked) ~ .ul__navigation>.li__navigation:nth-of-type(2){
-    animation-delay: .5s;    
-}
-.check_navigation:not(:checked) ~ .ul__navigation>.li__navigation:nth-of-type(3){
-    animation-delay: .8s;    
-}
-.check_navigation:not(:checked) ~ .ul__navigation>.li__navigation:nth-of-type(4){
-    animation-delay: 1s;    
-} */
 .check_navigation:checked ~ .ul__navigation--active > .li__navigation{
     opacity: 0;
     animation: LeftLinkRight .8s ease-in-out .3s forwards;
@@ -509,14 +486,16 @@ ul{
     position: fixed;
     display: flex;
     align-items: center;
+    
     flex-direction: column;
     background-color: var(--color-secondary);
     background-image: url(icons/wavesNegative.svg);
+    
     background-repeat: no-repeat;
     background-size:  100% 15%;
     background-position: bottom;
     width: 100%;
-    height: 100%;
+    height: 100vh;
 }
 .reproductor__cards{
   
@@ -549,16 +528,33 @@ ul{
     object-fit: contain;
     box-sizing: border-box;
     width: 100%;
+    border-radius: 2.5rem;
 }
 .card__description{
     text-align: center;
     color: var(--color-white);
+}
+.liked__music{
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
 }
 .reproductor__line{
     display: flex;
     flex-direction: column;
     align-content: center;
     width: 80%;
+}
+.option__icon--liked{
+    display: flex;
+    position: relative;
+    top: -4.21rem;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    align-content: center;
+
 }
 .option__icon{
     cursor: pointer;
@@ -591,6 +587,51 @@ ul{
     background-image: url(icons/play.svg);
     background-repeat: no-repeat;
     background-size: contain;
+}
+.option__label--liked{
+    display: block;
+    border-radius: 35px 35px 0px 0px;
+    background-color: var(--color-secondary);
+    width: 100px;
+    height: 4rem;
+    z-index: 20;
+}
+.option__label--liked::after{
+    content: '';
+    display: block;
+    position: relative;
+    top:-100%;
+    right: -100%;
+    margin-right: auto;
+    width: 70%;
+    height: 100%;
+    background-color: transparent;
+    box-shadow: -20px 23px 0px -5px var(--color-secondary);
+    border-radius: 80px;
+    z-index: -1;
+}
+.option__label--liked::before{
+    content: '';
+    display: block;
+    position: relative;
+    bottom: 0%;
+    left: -70%;
+    margin-right: auto;
+    width: 70%;
+    height: 100%;
+    background-color: transparent;
+    box-shadow: 20px 23px 0px -5px var(--color-secondary);
+    border-radius: 80px;
+    z-index: -1;
+}
+.music__svg--liked{
+    position:  absolute;
+    z-index: 99;    
+    width: 25px;
+    height: 25px;
+}
+.input__liked:checked + .music__svg{
+    fill: url(#MyGradient);
 }
 .input__play:checked + .option__icon--play{
     background-image: url(icons/detener.svg);
@@ -744,6 +785,5 @@ ul{
         -webkit-box-shadow: 2px 35px 25px -30px rgba(4,3,5,.5);
         -moz-box-shadow: 2px 35px 25px -30px rgba(4,3,5,.5); 
         box-shadow: 2px 30px 25px -35px rgb(255 255 255 / 50%);
-        
     }
 }
