@@ -23,6 +23,62 @@
   ::-ms-input-placeholder { /* Microsoft Edge */
     color: rgba(230,228,250,.5);
   }
+
+
+  progress {
+    border: 0;
+    background: linear-gradient(to right, rgba(255,255,255,.5), var(--color-secondary));
+    border-radius: 100px;
+    width: 100%;
+    height: .8em;
+    border: .1px solid var(--color-secondary);
+  }
+  progress::-moz-progress-bar {
+
+    border-radius: 100px;
+    background: linear-gradient(to right, #B1BAF9, #9D91FF, #CFA7FB, #F593FB);
+    border: .1px solid var(--color-secondary);
+  }
+  progress::-webkit-progress-bar {
+    background: linear-gradient(to right, rgba(255,255,255,.5), var(--color-secondary));
+    border-radius: 100px;
+    border: .1px solid var(--color-secondary);
+  }
+  progress::-webkit-progress-value {
+    border-radius: 100px;
+    background: linear-gradient(to right, #B1BAF9, #9D91FF, #CFA7FB, #F593FB);
+  }
+  progress[value="10"]::-webkit-progress-value{
+    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
+  }
+  progress[value="20"]::-webkit-progress-value{
+    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
+  }
+  progress[value="30"]::-webkit-progress-value{
+    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
+  }
+  progress[value="40"]::-webkit-progress-value{
+    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
+  }
+  progress[value="50"]::-webkit-progress-value{
+    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
+  }
+  progress[value="60"]::-webkit-progress-value{
+    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
+  }
+  progress[value="70"]::-webkit-progress-value{
+    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
+  }
+  progress[value="80"]::-webkit-progress-value{
+    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
+  }
+  progress[value="90"]::-webkit-progress-value{
+    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
+  }
+  progress[value="100"]::-webkit-progress-value{
+    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
+  }
+
 @keyframes LeftLinkRight {
     0% {
         transform: translateX(100px);
@@ -344,16 +400,18 @@ ul{
     align-self: flex-start;
     font-weight: 800;
     padding-right: 1rem;
+    z-index: 0;
 }
 .link--tittle::after{
     content: "\25b6";
     display: block;
-    z-index: 1;
+    z-index: 0;
     padding-left: .2rem;
     clip-path: polygon(0% 0%, 0 52%, 0 59%, 74% 21%, 80% 30%, 6% 68%, 0 50%, 0 100%, 100% 100%, 100% 0%);
     background: -webkit-linear-gradient(120deg, var(--color-primary), var(--color-secondary), var(--color-white));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+
 }
 .music{
     display: flex;
@@ -446,7 +504,98 @@ ul{
     object-fit: contain;
 
 }
+/* Reproductor */
+.reproductor{
+    position: fixed;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: var(--color-secondary);
+    background-image: url(icons/wavesNegative.svg);
+    background-repeat: no-repeat;
+    background-size:  100% 15%;
+    background-position: bottom;
+    width: 100%;
+    height: 100%;
+}
+.reproductor__cards{
+  
+    width: 100%;
+    height: 70%;
+}
+.reproductor__progress{
+    
+}
+.reproductor__option{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+}
 
+.card{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 100%;
+}
+
+.card__image{
+    width: 80%;
+}
+.img__card{
+    object-fit: contain;
+    box-sizing: border-box;
+    width: 100%;
+}
+.card__description{
+    text-align: center;
+    color: var(--color-white);
+}
+.reproductor__line{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    width: 80%;
+}
+.option__icon{
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+}
+.reproductor__option--play{
+    background: linear-gradient( 120deg, #B09EFB 5%, #DBAAFE, #EF8FFE, #ED8AFD);
+    padding: .9rem;
+    border-radius: 100%;
+}
+
+
+.music__svg{
+    fill: var(--color-white);
+}
+.music__next{
+    fill: var(--color-white);
+}
+.option__icon:hover .music__svg{
+    fill: url(#MyGradient);
+}
+
+.option__icon--play{
+    cursor: pointer;
+    display: block;
+   width: 100%;
+   height: 100%;
+    
+    background-image: url(icons/play.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.input__play:checked + .option__icon--play{
+    background-image: url(icons/detener.svg);
+
+}
 .none{
     display: none;
 }
@@ -472,14 +621,20 @@ ul{
         width: 100%;
         height: 100%;
         padding: 0;
+        justify-content: flex-start;
     }
     .header{
         margin: 2rem 1rem;
         width: 70%;
-        padding: .4rem;
+        padding: .3rem;
         border-radius: 30px;
         transition: width .5s;
-        
+        align-items: center;
+    }
+    .search-icon{
+        width: 20px;   
+        height: 20px;
+        padding-left: 1rem;
     }
     .input-search{
         display: flex;
@@ -492,7 +647,7 @@ ul{
         display: flex;
         position: relative;
         
-        width: 60%;
+        width: 70%;
         left: 0;
         z-index: 20;
         top: 0;
@@ -506,14 +661,14 @@ ul{
             "nav main"
             "nav main";
         grid-template-rows: .5fr 1fr;
-        grid-template-columns: 1fr .4fr;
+        grid-template-columns: 1fr .8fr;
         height: 70%;
     }
     .marker__li{
         display: block;
         top: 17.5%;
         right: 0%;
-        transition: all .9s;
+        transition: all .9s ;
         transition-property: top;
     }
     .icon__music--play{
@@ -567,11 +722,28 @@ ul{
     }
     .music{
         cursor: pointer;
-        
+        margin: .1rem;
+        padding: .2rem;
     }
     .music:hover{
-        box-shadow: -1px 0px 5px 44px rgba(0,0,0,0.25) inset;
-        -webkit-box-shadow: -1px 0px 5px 44px rgba(0,0,0,0.25) inset;
-        -moz-box-shadow: -1px 0px 5px 44px rgba(0,0,0,0.25) inset;
+        box-shadow: -1px 0px 5px 4px rgba(255,255,255,0.2)  ;
+        -webkit-box-shadow: -1px 0px 5px 4px rgba(255,255,255,0.2)  ;
+        -moz-box-shadow: -1px 0px 5px 4px rgba(255,255,255,0.2)  ;
+    }
+    .music__description{
+        padding: .5rem;
+    }
+    .section__artists .music__description{
+        width: 30%;
+    }
+    .icon__music-points{
+        border-radius: 50%;
+    }
+    .icon__music-points:hover{
+        box-shadow:  10px 0px 25px 0px rgba(4,3,5,.5)  ;
+        -webkit-box-shadow: 2px 35px 25px -30px rgba(4,3,5,.5);
+        -moz-box-shadow: 2px 35px 25px -30px rgba(4,3,5,.5); 
+        box-shadow: 2px 30px 25px -35px rgb(255 255 255 / 50%);
+        
     }
 }

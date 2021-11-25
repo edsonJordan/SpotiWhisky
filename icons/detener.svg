@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#EAF4FD" >
-
+<svg xmlns="http://www.w3.org/2000/svg" id="Filled" viewBox="0 0 24 24" fill="#EAF4FD"  >
 <linearGradient id="MyGradient">
                               <stop offset="5%" stop-color="#4A37E4" />
                               <stop offset="55%" stop-color="#D642DE" />
                               <stop offset="95%" stop-color="#AE6B7F" />
                             </linearGradient>
-<path d="M20.492,7.969,10.954.975A5,5,0,0,0,3,5.005V19a4.994,4.994,0,0,0,7.954,4.03l9.538-6.994a5,5,0,0,0,0-8.062Z"/>
-</svg>
+<path d="M6.5,0A3.5,3.5,0,0,0,3,3.5v17a3.5,3.5,0,0,0,7,0V3.5A3.5,3.5,0,0,0,6.5,0Z"/><path d="M17.5,0A3.5,3.5,0,0,0,14,3.5v17a3.5,3.5,0,0,0,7,0V3.5A3.5,3.5,0,0,0,17.5,0Z"/></svg>
