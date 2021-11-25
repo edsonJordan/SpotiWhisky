@@ -4,11 +4,13 @@
 :root {
   --color-primary: #16161E;
   --color-secondary: #1C1C24;
+  --color-thirty: #E7AA13;
 
   --color-white:#EAF4FD;
   --color-gradient-first:#4A37E4;
   --color-gradient-second:#D642DE;
   --color-gradient-third:#AE6B7F;
+  
 }
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: rgba(230,228,250,.5);
@@ -485,18 +487,23 @@ ul{
 .reproductor{
     position: fixed;
     display: flex;
-    align-items: center;
-    
+    align-items: center;    
     flex-direction: column;
+    justify-content: space-evenly ;
     background-color: var(--color-secondary);
-    background-image: url(icons/wavesNegative.svg);
-    
+    background-image: url(icons/wavesNegative.svg);    
     background-repeat: no-repeat;
     background-size:  100% 15%;
     background-position: bottom;
     width: 100%;
     height: 100vh;
 }
+.arrow__back{
+    width: 100%;
+    height: 5%;
+    
+}
+
 .reproductor__cards{
   
     width: 100%;
@@ -561,6 +568,16 @@ ul{
     width: 25px;
     height: 25px;
 }
+.option__icon--back{
+    position: relative;
+    display: block;
+    height: 35px;
+    width: 35px;
+    background-image: url(icons/arrow-back.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center left;
+}
 .reproductor__option--play{
     background: linear-gradient( 120deg, #B09EFB 5%, #DBAAFE, #EF8FFE, #ED8AFD);
     padding: .9rem;
@@ -592,6 +609,11 @@ ul{
     display: block;
     border-radius: 35px 35px 0px 0px;
     background-color: var(--color-secondary);
+    background-image: url(icons/corazon.svg);
+    background-repeat: no-repeat;
+    background-size: 30%;
+    background-position: center;
+
     width: 100px;
     height: 4rem;
     z-index: 20;
@@ -630,8 +652,8 @@ ul{
     width: 25px;
     height: 25px;
 }
-.input__liked:checked + .music__svg{
-    fill: url(#MyGradient);
+.input__liked:checked ~ .option__label--liked{
+    background-image: url(icons/corazon-active.svg);
 }
 .input__play:checked + .option__icon--play{
     background-image: url(icons/detener.svg);
