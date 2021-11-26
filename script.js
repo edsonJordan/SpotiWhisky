@@ -26,7 +26,17 @@ document.getElementById("ul__navigation").addEventListener("click", (e) => {
     }
 });
 
+/* Events clicks points  */
+const points = document.querySelectorAll('.icon__music--play');
+points?.forEach(point => {point.addEventListener('click', (e)=> {
+    document.getElementById("reproductor").classList.toggle("none");
+  })
+})
 
+document.getElementById("back").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("reproductor").classList.toggle("none");
+});
 
 
 const CLIENT_ID = "e666d111cbeb49f897e1a05352690b42"; // insert your client id here from spotify

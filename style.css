@@ -10,8 +10,14 @@
   --color-gradient-first:#4A37E4;
   --color-gradient-second:#D642DE;
   --color-gradient-third:#AE6B7F;
+
+  --clippy-initial: circle(38.6% at 100% 100%);
+    --clippy-medium: circle(85.8% at 100% 100%);
+    --clippy-final: circle(141.4% at 100% 100%);
   
 }
+
+
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: rgba(230,228,250,.5);
     font-weight: 400;
@@ -24,6 +30,9 @@
   
   ::-ms-input-placeholder { /* Microsoft Edge */
     color: rgba(230,228,250,.5);
+  }
+  ::-webkit-scrollbar {
+    visibility: hidden;
   }
 
 
@@ -80,7 +89,19 @@
   progress[value="100"]::-webkit-progress-value{
     box-shadow: 0 10px 50px 1px var(--color-gradient-second);
   }
-
+@keyframes animation-reproductor {
+  0% {
+    clip-path: var(--clippy-initial);
+  }
+  50% {
+    clip-path: var(--clippy-medium);
+  }
+  100% {
+    clip-path: var(--clippy-final);
+  }
+}
+    
+}
 @keyframes LeftLinkRight {
     0% {
         transform: translateX(100px);
@@ -497,6 +518,7 @@ ul{
     background-position: bottom;
     width: 100%;
     height: 100vh;
+    animation: animation-reproductor 1s ;
 }
 .arrow__back{
     width: 100%;
