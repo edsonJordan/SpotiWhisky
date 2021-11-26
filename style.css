@@ -505,9 +505,13 @@ ul{
 }
 
 .reproductor__cards{
-  
+    display: flex;
+    flex-direction: row;
+    overflow-x: scroll;
     width: 100%;
-    height: 70%;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    height: 60%;
 }
 .reproductor__progress{
     
@@ -526,15 +530,21 @@ ul{
     align-items: center;
     justify-content: space-evenly;
     height: 100%;
+    width: 100%;
+    row-gap: 15px;
+    min-width: calc(100vw);
+    scroll-snap-align: center;
 }
 
 .card__image{
-    width: 80%;
+    width: 70%;
+    height: 70%;
 }
 .img__card{
-    object-fit: contain;
+    object-fit: cover;
     box-sizing: border-box;
     width: 100%;
+    height: 100%;
     border-radius: 2.5rem;
 }
 .card__description{
@@ -573,6 +583,7 @@ ul{
     display: block;
     height: 35px;
     width: 35px;
+    left: 5%;
     background-image: url(icons/arrow-back.svg);
     background-size: 100%;
     background-repeat: no-repeat;
