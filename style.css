@@ -1,6 +1,5 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Karla:wght@200;300;400;600;800&display=swap');
-
 :root {
   --color-primary: #16161E;
   --color-secondary: #1C1C24;
@@ -10,14 +9,9 @@
   --color-gradient-first:#4A37E4;
   --color-gradient-second:#D642DE;
   --color-gradient-third:#AE6B7F;
-
-  --clippy-initial: circle(38.6% at 100% 100%);
-    --clippy-medium: circle(85.8% at 100% 100%);
+    --clippy-initial: circle(38.6% at 100% 100%);
     --clippy-final: circle(141.4% at 100% 100%);
-  
 }
-
-
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: rgba(230,228,250,.5);
     font-weight: 400;
@@ -32,10 +26,8 @@
     color: rgba(230,228,250,.5);
   }
   ::-webkit-scrollbar {
-    visibility: hidden;
+    display: none;
   }
-
-
   progress {
     border: 0;
     background: linear-gradient(to right, rgba(255,255,255,.5), var(--color-secondary));
@@ -59,48 +51,25 @@
     border-radius: 100px;
     background: linear-gradient(to right, #B1BAF9, #9D91FF, #CFA7FB, #F593FB);
   }
-  progress[value="10"]::-webkit-progress-value{
-    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
-  }
-  progress[value="20"]::-webkit-progress-value{
-    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
-  }
-  progress[value="30"]::-webkit-progress-value{
-    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
-  }
-  progress[value="40"]::-webkit-progress-value{
-    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
-  }
-  progress[value="50"]::-webkit-progress-value{
-    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
-  }
-  progress[value="60"]::-webkit-progress-value{
-    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
-  }
-  progress[value="70"]::-webkit-progress-value{
-    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
-  }
-  progress[value="80"]::-webkit-progress-value{
-    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
-  }
-  progress[value="90"]::-webkit-progress-value{
-    box-shadow: 0 10px 50px 1px var(--color-gradient-second);
-  }
-  progress[value="100"]::-webkit-progress-value{
+  progress[data="active"]::-webkit-progress-value{
     box-shadow: 0 10px 50px 1px var(--color-gradient-second);
   }
 @keyframes animation-reproductor {
   0% {
     clip-path: var(--clippy-initial);
   }
-  50% {
-    clip-path: var(--clippy-medium);
-  }
+  
   100% {
     clip-path: var(--clippy-final);
   }
 }
-    
+@keyframes animation-wave{
+    0% {
+        clip-path: circle(16.8% at 50% 50%);
+    }
+    100% {
+        clip-path: circle(70.7% at 50% 50%);
+    }
 }
 @keyframes LeftLinkRight {
     0% {
@@ -112,7 +81,6 @@
         opacity: 1;
     }
 }
-
 @keyframes LeftLinkRightOut {
     0% {
         transform: translateX(100px);
@@ -123,8 +91,6 @@
         opacity: 0;
     }
 }
-
-
 body{
     /* overflow: hidden; */
     margin:0;
@@ -133,7 +99,7 @@ body{
     background-color: var(--color-primary);
     font-family: 'Karla', sans-serif;
 }
-h1, h2{
+h1, h2, h3, p{
     margin: 0;
     color: var(--color-white);
 }
@@ -169,7 +135,6 @@ ul{
     border: .7px solid var(--color-white);
     transition: all 300ms ease-in-out;
     transition-property: width, border-radius;
-
 }
 .header_active{
     justify-content: space-between;
@@ -199,7 +164,6 @@ ul{
     height: 100%;
     position: fixed;
 }
-    
 .nav{
     grid-area: nav;
     display: flex;
@@ -210,7 +174,6 @@ ul{
     margin: 1.5rem 2rem;
     border-radius: 50%;
     border: 1px solid var(--color-white);
-  
 }
 .main{
     grid-area: main;
@@ -240,7 +203,6 @@ ul{
     width: 3px;
     height: 30px;
     background-color: var(--color-white);
-   
     left:50%;
     transform: rotate(45deg);
 }
@@ -250,7 +212,6 @@ ul{
     width: 3px;
     height: 30px;
     background-color: var(--color-white);
-   
     left:50%;
     transform: rotate(-45deg);
 }
@@ -278,7 +239,6 @@ ul{
     font-size: 1.2em;
     font-weight: semibold;
 }
-
 .check_search:checked ~ .input-search{
     display: flex;
 }
@@ -294,7 +254,6 @@ ul{
     cursor: pointer;
 }
 .li__navigation--active{
-    
     box-shadow:0px 27px 44px -1px rgb(252 221 253);
     transition: all .9s;
     transition-property: box-shadow;
@@ -306,13 +265,11 @@ ul{
     width: 3px;
     border-radius: 2px;
     background-color: var(--color-white);
-    
     transition: all .8s;
     transition-property: position, top, left;
 }
 .li__navigation:nth-child(1){
     background-image: url(icons/home.svg);
-    
 }
 .li__navigation:nth-child(2){
     background-image: url(icons/music-alt.svg);
@@ -327,7 +284,6 @@ ul{
     opacity: 0;
     animation: LeftLinkRight .8s ease-in-out .3s forwards;
 }
-
 .check_navigation:checked ~ .ul__navigation--active>.li__navigation:nth-of-type(1){
     animation-delay: .2s;    
 }
@@ -340,7 +296,6 @@ ul{
 .check_navigation:checked ~ .ul__navigation--active>.li__navigation:nth-of-type(4){
     animation-delay: 1s;    
 }
-
 /* Sections */
 .section__banner{
     display: flex;
@@ -358,7 +313,6 @@ ul{
     height: 100%;
     row-gap: .5rem;
 }
-
 .section__banner--img{
     display: flex;
     justify-content: flex-end;
@@ -394,7 +348,6 @@ ul{
     box-shadow: 2px 20px 30px -12px rgba(230,228,250,.5);
     -webkit-box-shadow: 2px 20px 30px -12px rgba(230,228,250,.5);
     -moz-box-shadow: 2px 20px 30px -12px rgba(230,228,250,.5);
-
 }
 .link--tittle{
     align-self: flex-start;
@@ -411,7 +364,6 @@ ul{
     background: -webkit-linear-gradient(120deg, var(--color-primary), var(--color-secondary), var(--color-white));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-
 }
 .music{
     display: flex;
@@ -427,7 +379,6 @@ ul{
     border-bottom: 1px double;
     border-style: solid;
     border-image: linear-gradient(to right, transparent 10%, rgba(255,255,255,.5) 25%,rgba(255,255,255,.5) 50%,transparent 90%) 10 10%;
-     
 }
 .music:last-of-type{
     border-bottom: none;
@@ -473,7 +424,6 @@ ul{
     font-weight: 300;
     font-size: .8em;
 }
-
 .music__option{
     display: flex;
     flex-direction: row;
@@ -483,10 +433,8 @@ ul{
     height: 100%;
 }
 .icon__music-points{
-    
     background-image: url(icons/double-point-vertical.svg);
     transform: rotate(90deg);
-    
 }
 .icon__music--play{
     width: 20px;
@@ -498,11 +446,9 @@ ul{
     margin: auto;
     width: 20px;
     height: 20px;
-    
     background-image: url(icons/arrow-out.svg);
     background-size: 100%;
     object-fit: contain;
-
 }
 /* Reproductor */
 .reproductor{
@@ -522,8 +468,7 @@ ul{
 }
 .arrow__back{
     width: 100%;
-    height: 5%;
-    
+    height: 5%; 
 }
 
 .reproductor__cards{
@@ -535,6 +480,7 @@ ul{
     scroll-behavior: smooth;
     height: 60%;
 }
+
 .reproductor__progress{
     
 }
@@ -593,7 +539,6 @@ ul{
     align-items: center;
     justify-items: center;
     align-content: center;
-
 }
 .option__icon{
     cursor: pointer;
@@ -616,8 +561,6 @@ ul{
     padding: .9rem;
     border-radius: 100%;
 }
-
-
 .music__svg{
     fill: var(--color-white);
 }
@@ -627,13 +570,11 @@ ul{
 .option__icon:hover .music__svg{
     fill: url(#MyGradient);
 }
-
 .option__icon--play{
     cursor: pointer;
     display: block;
-   width: 100%;
-   height: 100%;
-    
+    width: 100%;
+    height: 100%;
     background-image: url(icons/play.svg);
     background-repeat: no-repeat;
     background-size: contain;
@@ -646,7 +587,6 @@ ul{
     background-repeat: no-repeat;
     background-size: 30%;
     background-position: center;
-
     width: 100px;
     height: 4rem;
     z-index: 20;
@@ -690,7 +630,6 @@ ul{
 }
 .input__play:checked + .option__icon--play{
     background-image: url(icons/detener.svg);
-
 }
 .none{
     display: none;
@@ -759,6 +698,7 @@ ul{
         grid-template-rows: .5fr 1fr;
         grid-template-columns: 1fr .8fr;
         height: 70%;
+        width: 80%;
     }
     .marker__li{
         display: block;
@@ -781,6 +721,123 @@ ul{
     }
     .h1__tittle{
         font-size: 2.5em;
+    }
+    .arrow__back{
+        display: none;
+    }
+    .reproductor{
+        display: grid;
+        grid-template-areas:
+            "cards option-reproductor line-reproductor";
+        grid-template-rows: 1fr;
+        grid-template-columns: 1fr .5fr 1.9fr;
+        column-gap: 1.2rem;
+        width: 100%;
+        height: 5%;
+        bottom: 0;
+        padding: 1rem 0rem;
+    }
+    .reproductor__cards{      
+       
+        grid-area: cards;
+        padding: 0;
+        height: initial; 
+    }
+    .reproductor__line{
+        grid-area: line-reproductor;
+        flex-direction: row;
+    }
+    .reproductor__option{
+        grid-area: option-reproductor;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+    .card{
+        flex-direction: row;
+        justify-content: flex-start;
+        min-width: 100%;
+        direction: rtl;
+    }
+    .card__image{
+        height: 100%;
+        width: 40%;
+        display: flex;
+        flex-direction: row;
+        direction: ltr;
+        align-items: center;
+        justify-content: flex-end ;
+        
+    }
+    
+    .img__card{
+        object-fit: contain;
+        width: 2.5rem;
+        height: 100%;
+        border-radius: 30%;
+        margin: .5rem;
+            box-shadow: 0px 1px 10px .01px rgba(255,255,255,0.9);
+    -webkit-box-shadow: 0px 1px 10px .01px rgba(255,255,255,0.9);
+    -moz-box-shadow:    0px 1px 10px .01px rgba(255,255,255,0.9);
+    }
+    .option__icon--liked{
+        float: right;
+        top: initial;
+        width: 50%;
+    }
+    
+    .option__label--liked::after, .option__label--liked::before{
+        display: none;
+
+    }
+    .card__description{
+        flex-direction: row;
+    }
+    .reproductor__option--play{
+        padding:  .5rem;
+    }
+     .option__icon{
+        width: 15px;
+        height: 15px;
+    }
+    .option__label--liked{
+        background-size: 30%;
+        width: 60px;
+        height: 60px;
+    }
+    /* Ondas sonoras */
+    .reproductor__progress{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 2em;
+    }
+    .container__onda{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: start;
+        height: 3em;
+        width: 100%;
+        column-gap: .3em;
+    }
+    .onda{
+        width: 1.2%;
+        height: 80%;
+        background-color: #535359;
+        border-radius: 1.5em;
+        transition: all 1s;
+        transition-property: height;
+        animation: animation-wave 1s ease-in;
+    }
+    .onda:nth-child(n){
+        background: linear-gradient(to right, #B14AF9, #9D91FF, #CFA7FB, #F593FB);
+        box-shadow: 0 2px 20px 1px var(--color-gradient-second);
+        transition: all 1.5s;   
+        transition-property: boxshadow, background;
+    }
+
+    .reproductor__progress{
+        display: none;
     }
 }
 @media (min-width: 1024px) { 

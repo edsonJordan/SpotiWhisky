@@ -1,3 +1,6 @@
+//http://w3.unpocodetodo.info/utiles/waa-analizador-de-sonido.php
+//https://codepen.io/enxaneta/pen/613c5b3f253999304f009075c04c638b
+//https://www.youtube.com/watch?v=41xCGwVI498&ab_channel=SoyDalto
 document.getElementById('search-icon').addEventListener('change', (e) => {
     const searchInput = document.getElementById('search-input');
     document.getElementById("header").classList.toggle("header_active");
@@ -25,20 +28,13 @@ document.getElementById("ul__navigation").addEventListener("click", (e) => {
         marker.style.top = (lat-2) + "px";
     }
 });
-
 /* Events clicks points  */
-const points = document.querySelectorAll('.icon__music--play');
-points?.forEach(point => {point.addEventListener('click', (e)=> {
-    document.getElementById("reproductor").classList.toggle("none");
-  })
-})
 
+/* Event Listener butotn back */
 document.getElementById("back").addEventListener("click", (e) => {
     e.preventDefault();
     document.getElementById("reproductor").classList.toggle("none");
 });
-
-
 const CLIENT_ID = "e666d111cbeb49f897e1a05352690b42"; // insert your client id here from spotify
 const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
 const REDIRECT_URL_AFTER_LOGIN = "http://localhost:5500/";
@@ -66,7 +62,164 @@ const getReturnedParamsFromSpotifyAuth = (hash) => {
     return paramsSplitUp;
   };
 
+function restartToken(hash) {
+    if (hash) {
+            const { access_token } =
+            getReturnedParamsFromSpotifyAuth(hash);
+            localStorage.clear();
+            localStorage.setItem("TokenCode", access_token);
+            window.location.href = REDIRECT_URL_AFTER_LOGIN;
+        }
 
+}
+
+
+
+
+var audioCtx =new (window.AudioContext || window.webkitAudioContext) ;
+var analizador =    analizador = audioCtx.createAnalyser();
+var bufferLength = analizador.frequencyBinCount;  
+  
+var dataArray = new Uint8Array(bufferLength);
+
+analizador.fftSize = 2048;// [32, 64, 128, 256, 512, 1024, 2048]
+
+var dataArray = new Uint8Array(analizador.frequencyBinCount);
+const button = document.getElementById("audio");
+const points = document.querySelectorAll('.icon__music--play');
+var url, audio, fuenteDeReproduccion;
+let gettFrecuency = null;
+let played = [];
+let time = 0;
+let stop = true;
+let play = false;
+let musicCode=null;
+points?.forEach(point => {point.addEventListener('click', (e)=> {
+    document.getElementById("reproductor").classList.toggle("none");
+    //time = audioCtx.currentTime;
+    audio();
+    //button.play();
+  })
+})
+
+
+function detenerAudio() {
+  fuenteDeReproduccion.stop();
+  clearInterval(gettFrecuency);
+}
+function audio() {
+    //console.log(audioCtx.currentTime);
+  if (stop) {
+    // si el audio está parado
+    //time = audioCtx.currentTime;
+  
+    reproducirAudio();
+    //time =audioCtx.currentTime;
+    stop = false;
+    play = true;
+  } else {
+    // de lo contrario
+    detenerAudio();
+    stop = true;
+    play = false;
+  }
+  //console.log(time);
+}
+solicitarAudio(
+  "https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3"
+);
+function solicitarAudio(url) {
+    var request = new XMLHttpRequest();
+    request.open("GET", url, true);
+    request.responseType = "arraybuffer";
+    request.onload = function() {
+      audioCtx.decodeAudioData(request.response, function(buffer) {
+        audioBuffer = buffer;
+      });
+    };
+    request.send();
+  }
+  const containerwaves=  document.getElementById("container__onda");
+  function createWave(container, heightNode = "10%") {
+    const fragment = document.createDocumentFragment() 
+    const nodechild = document.createElement("div");
+    nodechild.setAttribute('class', 'onda');  
+    nodechild.style.height = heightNode;
+    fragment.appendChild(nodechild);
+    container.appendChild(fragment)
+  }
+  function reproducirAudio() {
+    
+    fuenteDeReproduccion = audioCtx.createBufferSource();
+    fuenteDeReproduccion.buffer = audioBuffer;
+    fuenteDeReproduccion.connect(audioCtx.destination);
+    fuenteDeReproduccion.connect(analizador)
+    analizador.connect(audioCtx.destination);
+    fuenteDeReproduccion.start(audioCtx.currentTime);
+
+    
+    let height = containerwaves.clientHeight;
+    if (time == 0) {
+      containerwaves.innerHTML = "";
+      gettFrecuency= setInterval(function(){
+        var bufferLength = analizador.frequencyBinCount;  
+  
+        var dataArray = new Uint8Array(bufferLength);
+  
+        //drawVisual = window.requestAnimationFrame(foto);
+        analizador.getByteTimeDomainData(dataArray);
+        let percentage = (((( ( (Math.max.apply(null, dataArray))).toFixed(2)/ 128  )* 100)- 100).toFixed(0)+ "%");
+        createWave(containerwaves, percentage);
+        //Time musical 
+        //fuenteDeReproduccion.buffer.duration
+        
+        //Time actual
+        //audioCtx.currentTime
+        console.log();
+      }, 1000);
+     }else{
+      gettFrecuency= setInterval(function(){
+       
+  
+        //drawVisual = window.requestAnimationFrame(foto);
+        analizador.getByteTimeDomainData(dataArray);
+        let percentage = (((( ( (Math.max.apply(null, dataArray))).toFixed(2)/ 128  )* 100)- 100).toFixed(0)+ "%");
+        //console.log(percentage);
+        createWave(containerwaves, percentage);
+        //Time musical 
+        //fuenteDeReproduccion.buffer.duration
+        
+        //Time actual
+        //audioCtx.currentTime
+      }, 1000);
+     }
+
+
+      
+  }
+function foto(){
+  drawVisual = window.requestAnimationFrame(foto);
+  console.log(time);
+  /* var bufferLength = analizador.frequencyBinCount;  
+  var dataArray = new Uint8Array(bufferLength);
+  drawVisual = window.requestAnimationFrame(foto);
+  analizador.getByteTimeDomainData(dataArray);
+  console.log(Math.max.apply(null, dataArray)); */
+      /* setInterval(function() {
+        if(!stop || audioBuffer && audioCtx.currentTime - time >= audioBuffer.duration){
+          
+          var bufferLength = analizador.frequencyBinCount;  
+          var dataArray = new Uint8Array(bufferLength);
+          drawVisual = window.requestAnimationFrame(foto);
+          analizador.getByteTimeDomainData(dataArray);
+          console.log(Math.max.apply(null, dataArray)); 
+        }
+      }, 1000); */
+      //Musica almacenada en buffer
+         //fuenteDeReproduccion.buffer
+
+  }
+ 
 window.onload = function() {
     if (localStorage.getItem("TokenCode")) {
         //document.getElementById("Loggin").style.display = "none";
@@ -75,21 +228,12 @@ window.onload = function() {
     }
     //console.log(window.location.hash);
     restartToken(window.location.hash);
-    
   };
-  function restartToken(hash) {
-      if (hash) {
-            const { access_token } =
-            getReturnedParamsFromSpotifyAuth(hash);
-            localStorage.clear();
-            localStorage.setItem("TokenCode", access_token);
-            window.location.href = REDIRECT_URL_AFTER_LOGIN;
-          }
     
-  }
-    // private methods
- 
 
+
+
+    // private methods
     /* const getToken = async () => {
 
         const result = await fetch('https://accounts.spotify.com/api/token', {
