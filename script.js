@@ -1,6 +1,7 @@
 //http://w3.unpocodetodo.info/utiles/waa-analizador-de-sonido.php
 //https://codepen.io/enxaneta/pen/613c5b3f253999304f009075c04c638b
 //https://www.youtube.com/watch?v=41xCGwVI498&ab_channel=SoyDalto
+//https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData#new_promise-based_syntax
 document.getElementById('search-icon').addEventListener('change', (e) => {
     const searchInput = document.getElementById('search-input');
     document.getElementById("header").classList.toggle("header_active");
@@ -89,58 +90,100 @@ const button = document.getElementById("audio");
 const points = document.querySelectorAll('.icon__music--play');
 var url, audio, fuenteDeReproduccion;
 let gettFrecuency = null;
+let runMusic = null;
 let played = [];
+
 let time = 0;
 let stop = true;
 let play = false;
-let musicCode=null;
+
+
+
+let musicCode = null;
+let musicTime = 0;
+
+
+let musicFlow=null;
+const second = 1;
+
+var source;
+var DurationBuffer= null;
+
 points?.forEach(point => {point.addEventListener('click', (e)=> {
     document.getElementById("reproductor").classList.toggle("none");
     //time = audioCtx.currentTime;
-    audio();
+    const music = e.target.getAttribute('cod-music');
+    audio(music);
     //button.play();
   })
 })
-
-
 function detenerAudio() {
   fuenteDeReproduccion.stop();
   clearInterval(gettFrecuency);
+  clearInterval(runMusic);
 }
-function audio() {
-    //console.log(audioCtx.currentTime);
-  if (stop) {
-    // si el audio está parado
-    //time = audioCtx.currentTime;
-  
-    reproducirAudio();
-    //time =audioCtx.currentTime;
-    stop = false;
-    play = true;
-  } else {
-    // de lo contrario
-    detenerAudio();
+function audio( music) {
+    
+    if(!musicFlow ){        
+        musicCode,musicFlow = music;
+        musicTime = 0;
+          getData();
+        return  fetchAudio(`https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3`);
+          //return reproducirAudio(0, musicFlow == music ? true:false);
+    }
+    if (stop) {
+      // si el audio está parado
+      //time =audioCtx.currentTime;
+      stop = false;
+      play = true;  
+      return detenerAudio();
+    } 
+    if (musicFlow && musicFlow !== music ) {
+        musicCode,musicFlow = music;
+        //console.log(musicFlow);
+        musicTime = 0;
+        stop = true;
+        play = false;
+        return  fetchAudio(`https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3`);
+        //return reproducirAudio(0, musicFlow == music? true:false);
+    }
+    musicCode = music;
     stop = true;
     play = false;
+      return  fetchAudio(`https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3`, musicTime);
+    //return reproducirAudio(musicTime);
   }
-  //console.log(time);
-}
-solicitarAudio(
-  "https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3"
-);
-function solicitarAudio(url) {
-    var request = new XMLHttpRequest();
-    request.open("GET", url, true);
-    request.responseType = "arraybuffer";
-    request.onload = function() {
-      audioCtx.decodeAudioData(request.response, function(buffer) {
-        audioBuffer = buffer;
-      });
-    };
-    request.send();
+  async function fetchAudio(url, flow = 0) {
+     return  fetch(url)
+    .then(res => res.ok ? Promise.resolve(res.arrayBuffer()): Promise.reject(res))    
+    .then(res => audioCtx.decodeAudioData(res, function(buffer) {
+      fuenteDeReproduccion = audioCtx.createBufferSource();
+        fuenteDeReproduccion.buffer = buffer;
+        fuenteDeReproduccion.connect(audioCtx.destination);
+        fuenteDeReproduccion.connect(analizador)
+        analizador.connect(audioCtx.destination);
+        let musicNow = Math.trunc(fuenteDeReproduccion.buffer.duration);
+        flow == 0 ?  [musicTime = musicNow, fuenteDeReproduccion.start(0,0), containerwaves.innerHTML = ""]  :
+         [musicTime= flow, fuenteDeReproduccion.start(0,  musicNow - flow )]  ;
+        //console.log(same);
+         //console.log(flow);
+        let timeCache = musicTime;
+        gettFrecuency = setInterval(() => {
+                  musicTime == 0 ?  clearInterval(gettFrecuency) : musicTime = timeCache--;
+                  //console.log(musicTime);
+                  let bufferLength = analizador.frequencyBinCount;  
+                  let dataArray = new Uint8Array(bufferLength);
+                  //drawVisual = window.requestAnimationFrame(foto);
+                  analizador.getByteTimeDomainData(dataArray);
+                  let percentage = (((( ( (Math.max.apply(null, dataArray))).toFixed(2)/ 128  )* 100)- 100).toFixed(0)+ "%");
+                  createWave(containerwaves, percentage);
+           //       console.log(timeCache);
+          }, 1000);
+    })
+    ) 
   }
   const containerwaves=  document.getElementById("container__onda");
-  function createWave(container, heightNode = "10%") {
+function createWave(container, heightNode = "10%") {
     const fragment = document.createDocumentFragment() 
     const nodechild = document.createElement("div");
     nodechild.setAttribute('class', 'onda');  
@@ -148,78 +191,26 @@ function solicitarAudio(url) {
     fragment.appendChild(nodechild);
     container.appendChild(fragment)
   }
-  function reproducirAudio() {
-    
-    fuenteDeReproduccion = audioCtx.createBufferSource();
-    fuenteDeReproduccion.buffer = audioBuffer;
-    fuenteDeReproduccion.connect(audioCtx.destination);
-    fuenteDeReproduccion.connect(analizador)
-    analizador.connect(audioCtx.destination);
-    fuenteDeReproduccion.start(audioCtx.currentTime);
-
-    
-    let height = containerwaves.clientHeight;
-    if (time == 0) {
-      containerwaves.innerHTML = "";
-      gettFrecuency= setInterval(function(){
-        var bufferLength = analizador.frequencyBinCount;  
-  
-        var dataArray = new Uint8Array(bufferLength);
-  
-        //drawVisual = window.requestAnimationFrame(foto);
-        analizador.getByteTimeDomainData(dataArray);
-        let percentage = (((( ( (Math.max.apply(null, dataArray))).toFixed(2)/ 128  )* 100)- 100).toFixed(0)+ "%");
-        createWave(containerwaves, percentage);
-        //Time musical 
-        //fuenteDeReproduccion.buffer.duration
-        
-        //Time actual
-        //audioCtx.currentTime
-        console.log();
-      }, 1000);
-     }else{
-      gettFrecuency= setInterval(function(){
-       
-  
-        //drawVisual = window.requestAnimationFrame(foto);
-        analizador.getByteTimeDomainData(dataArray);
-        let percentage = (((( ( (Math.max.apply(null, dataArray))).toFixed(2)/ 128  )* 100)- 100).toFixed(0)+ "%");
-        //console.log(percentage);
-        createWave(containerwaves, percentage);
-        //Time musical 
-        //fuenteDeReproduccion.buffer.duration
-        
-        //Time actual
-        //audioCtx.currentTime
-      }, 1000);
-     }
-
-
-      
+  function getData() {
+    source = audioCtx.createBufferSource();
+    var request = new XMLHttpRequest();
+    request.open('GET', 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3', true);
+    request.responseType = 'arraybuffer';
+    request.onload = function() {
+      var audioData = request.response;
+      audioCtx.decodeAudioData(audioData, function(buffer) {
+          source.buffer = buffer;
+          source.connect(audioCtx.destination);
+          source.loop = true;
+        },
+        function(e){ console.log("Error with decoding audio data" + e.err); });
+    }
+    request.send();
   }
-function foto(){
-  drawVisual = window.requestAnimationFrame(foto);
-  console.log(time);
-  /* var bufferLength = analizador.frequencyBinCount;  
-  var dataArray = new Uint8Array(bufferLength);
-  drawVisual = window.requestAnimationFrame(foto);
-  analizador.getByteTimeDomainData(dataArray);
-  console.log(Math.max.apply(null, dataArray)); */
-      /* setInterval(function() {
-        if(!stop || audioBuffer && audioCtx.currentTime - time >= audioBuffer.duration){
-          
-          var bufferLength = analizador.frequencyBinCount;  
-          var dataArray = new Uint8Array(bufferLength);
-          drawVisual = window.requestAnimationFrame(foto);
-          analizador.getByteTimeDomainData(dataArray);
-          console.log(Math.max.apply(null, dataArray)); 
-        }
-      }, 1000); */
-      //Musica almacenada en buffer
-         //fuenteDeReproduccion.buffer
-
-  }
- 
+  /* solicitarAudio(
+    "https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3"
+  ); */
+  //fetchAudio(`https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3`);
 window.onload = function() {
     if (localStorage.getItem("TokenCode")) {
         //document.getElementById("Loggin").style.display = "none";
@@ -229,10 +220,6 @@ window.onload = function() {
     //console.log(window.location.hash);
     restartToken(window.location.hash);
   };
-    
-
-
-
     // private methods
     /* const getToken = async () => {
 
@@ -249,3 +236,5 @@ window.onload = function() {
         return data.access_token;
     }; */
 //getToken();
+
+
