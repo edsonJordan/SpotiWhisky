@@ -2,6 +2,7 @@
 //https://codepen.io/enxaneta/pen/613c5b3f253999304f009075c04c638b
 //https://www.youtube.com/watch?v=41xCGwVI498&ab_channel=SoyDalto
 //https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData#new_promise-based_syntax
+//https://developer.spotify.com/console/put-play/
 document.getElementById('search-icon').addEventListener('change', (e) => {
     const searchInput = document.getElementById('search-input');
     document.getElementById("header").classList.toggle("header_active");
@@ -45,6 +46,8 @@ const SCOPES = ["user-read-currently-playing",
 "playlist-read-private", 
 "user-read-playback-position",
 "user-read-recently-played",
+"user-library-read",
+"user-follow-read",
 "user-top-read"];
 const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
 
@@ -80,18 +83,16 @@ function restartToken(hash) {
 var audioCtx =new (window.AudioContext || window.webkitAudioContext) ;
 var analizador =    analizador = audioCtx.createAnalyser();
 var bufferLength = analizador.frequencyBinCount;  
-  
 var dataArray = new Uint8Array(bufferLength);
-
 analizador.fftSize = 2048;// [32, 64, 128, 256, 512, 1024, 2048]
 
 var dataArray = new Uint8Array(analizador.frequencyBinCount);
 const button = document.getElementById("audio");
 const points = document.querySelectorAll('.icon__music--play');
 var url, audio, fuenteDeReproduccion;
+
 let gettFrecuency = null;
 let runMusic = null;
-let played = [];
 
 let time = 0;
 let stop = true;
@@ -104,10 +105,8 @@ let musicTime = 0;
 
 
 let musicFlow=null;
-const second = 1;
-
 var source;
-var DurationBuffer= null;
+//var DurationBuffer= null;
 
 points?.forEach(point => {point.addEventListener('click', (e)=> {
     document.getElementById("reproductor").classList.toggle("none");
@@ -128,7 +127,7 @@ function audio( music) {
         musicCode,musicFlow = music;
         musicTime = 0;
           getData();
-        return  fetchAudio(`https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3`);
+        return  fetchAudio(`https://p.scdn.co/mp3-preview/e0c72d148c26dd4d17d85f573f97a1bb60c4f244?cid=e666d111cbeb49f897e1a05352690b42`);
           //return reproducirAudio(0, musicFlow == music ? true:false);
     }
     if (stop) {
@@ -144,13 +143,13 @@ function audio( music) {
         musicTime = 0;
         stop = true;
         play = false;
-        return  fetchAudio(`https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3`);
+        return  fetchAudio(`https://p.scdn.co/mp3-preview/e0c72d148c26dd4d17d85f573f97a1bb60c4f244?cid=e666d111cbeb49f897e1a05352690b42`);
         //return reproducirAudio(0, musicFlow == music? true:false);
     }
     musicCode = music;
     stop = true;
     play = false;
-      return  fetchAudio(`https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3`, musicTime);
+      return  fetchAudio(`https://p.scdn.co/mp3-preview/e0c72d148c26dd4d17d85f573f97a1bb60c4f244?cid=e666d111cbeb49f897e1a05352690b42`, musicTime);
     //return reproducirAudio(musicTime);
   }
   async function fetchAudio(url, flow = 0) {
@@ -207,24 +206,24 @@ function createWave(container, heightNode = "10%") {
     }
     request.send();
   }
-  /* solicitarAudio(
-    "https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3"
-  ); */
   //fetchAudio(`https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3`);
+
+  
 window.onload = function() {
     if (localStorage.getItem("TokenCode")) {
-        //document.getElementById("Loggin").style.display = "none";
+        document.getElementById("Loggin").style.display = "none";
     }else{
-        //document.getElementById("Loggin").style.display = "block";
+        document.getElementById("Loggin").style.display = "block";
     }
     //console.log(window.location.hash);
     restartToken(window.location.hash);
+   
+    //localStorage.setItem("TokenCode", "12");
   };
     // private methods
-    /* const getToken = async () => {
-
+    const getToken = async () => {
         const result = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
+            method: 'Get',
             headers: {
                 'Content-Type' : 'application/x-www-form-urlencoded', 
                 'Authorization' : 'Basic ' + btoa(clientId + ':' + clientSecret)
@@ -232,9 +231,99 @@ window.onload = function() {
             body: 'grant_type=client_credentials'
         });
         const data = await result.json();
-        console.log(data);
         return data.access_token;
-    }; */
+    };
+
+    function FetchArtistFollow() {
+       let data =  fetch("https://api.spotify.com/v1/me/following?type=artist&limit=6", {
+                        method: "GET",
+                        headers: {                  
+                          Authorization: `Bearer BQCSttn_AUuc_xh9u4VCzsPTOzLtufq9UtHTlm3tKxtoxhqE9ochc6rx9kS4zxNcWViKDS2JvsHMinbrz0ZfhjdjPVncvNazuBTdGP2PPXXg5VSX4wel0LuIcA2Fr2_vzRL69K1Qsr4PdLbjM7EjsQqkwMN1lRSM09VInEujd-tXJOoerMZYRJhmldADoQ3jqveZcVB0d6fZeHOZ`
+                        }
+                      }
+                    )
+      .then(res => res.ok ? Promise.resolve(res): Promise.reject(res))    
+      .then(res => res.json()
+      .then(res => {
+          for (const iterator of res.artists.items) {
+                let Img = iterator.images[2].url;
+                let Tittle =iterator.name;
+                let Description = iterator.genres;
+                paintFollowArtis(Img, Tittle, "Description")
+                //console.log(iterator.genres);
+          }
+      })
+      )
+      return data;
+    }
+  function paintFollowArtis(img, Tittle, Description) {
+
+    const NodeArtistsFollowed =document.getElementById("ArtistsFollowed");
+
+
+    const FrgmntArtist = document.createDocumentFragment();
+    const FrgmntTittle = document.createDocumentFragment();
+    const FrgmntDescription = document.createDocumentFragment();
+
+
+    
+    const FrgmnButtonOption = document.createDocumentFragment();
+    const FrgmntOption = document.createDocumentFragment();
+
+    const MusicDiv = document.createElement("div");
+        MusicDiv.classList.add("music");
+
+        const newImage = document.createElement('img');
+          newImage.setAttribute('src', img);
+          newImage.classList.add('music__image');
+
+        const DescriptionDiv = document.createElement("div");
+              DescriptionDiv.classList.add("music__description");
+        const TittleDescr = document.createElement("div");
+        TittleDescr.setAttribute("class", "music__description--tittle");
+
+        const TittleContent= document.createElement("SPAN");
+          TittleContent.classList.add("description__tittle--name");
+          TittleContent.textContent= Tittle;
+
+        const DescriptionContent = document.createElement("SPAN");
+          DescriptionContent.classList.add("description__tittle--artist");
+          DescriptionContent.textContent=Description;
+
+          FrgmntTittle.appendChild(TittleContent);
+          FrgmntTittle.appendChild(DescriptionContent);
+
+        TittleDescr.appendChild(FrgmntTittle);
+
+        DescriptionDiv.appendChild(newImage);
+        DescriptionDiv.appendChild(TittleDescr);
+        
+        FrgmntDescription.appendChild(DescriptionDiv);
+      
+        
+
+
+        /* Node music Option */
+      const MusicOption = document.createElement("div");
+        MusicOption.classList.add("music__option");
+
+      const BtnOption = document.createElement("A");
+        BtnOption.classList.add("icon__music", "icon__music-points");
+      
+        FrgmnButtonOption.appendChild(BtnOption);
+      MusicOption.appendChild(FrgmnButtonOption);
+
+      MusicDiv.appendChild(FrgmntDescription);
+      MusicDiv.appendChild(MusicOption);
+      
+     
+        
+      
+      FrgmntArtist.appendChild(MusicDiv);
+
+        //Adding to div Principal
+        NodeArtistsFollowed.appendChild(FrgmntArtist);
+  }
 //getToken();
 
-
+FetchArtistFollow();
