@@ -107,27 +107,37 @@ let musicTime = 0;
 let musicFlow=null;
 var source;
 //var DurationBuffer= null;
-
-points?.forEach(point => {point.addEventListener('click', (e)=> {
+  document.getElementById("RecentlyPlayed").addEventListener("click", (e) => {
+    e.preventDefault();
+    //console.log(typeof(e.target.className));
+    let ClassName =e.target.className;
+    if(ClassName.indexOf("icon__music--play") !== -1){
+      document.getElementById("reproductor").classList.toggle("none");
+    //time = audioCtx.currentTime;
+      const MusicUrl = e.target.getAttribute('url');
+      const MusicId = e.target.id;
+      audio(MusicId, MusicUrl);
+    }
+  });
+/* points?.forEach(point => {point.addEventListener('click', (e)=> {
     document.getElementById("reproductor").classList.toggle("none");
     //time = audioCtx.currentTime;
     const music = e.target.getAttribute('cod-music');
+    console.log();
     audio(music);
     //button.play();
   })
-})
+}) */
 function detenerAudio() {
   fuenteDeReproduccion.stop();
   clearInterval(gettFrecuency);
   clearInterval(runMusic);
 }
-function audio( music) {
-    
+function audio(music, Url) {
     if(!musicFlow ){        
         musicCode,musicFlow = music;
         musicTime = 0;
-          getData();
-        return  fetchAudio(`https://p.scdn.co/mp3-preview/e0c72d148c26dd4d17d85f573f97a1bb60c4f244?cid=e666d111cbeb49f897e1a05352690b42`);
+        return  fetchAudio(Url);
           //return reproducirAudio(0, musicFlow == music ? true:false);
     }
     if (stop) {
@@ -143,13 +153,13 @@ function audio( music) {
         musicTime = 0;
         stop = true;
         play = false;
-        return  fetchAudio(`https://p.scdn.co/mp3-preview/e0c72d148c26dd4d17d85f573f97a1bb60c4f244?cid=e666d111cbeb49f897e1a05352690b42`);
+        return  fetchAudio(Url);
         //return reproducirAudio(0, musicFlow == music? true:false);
     }
     musicCode = music;
     stop = true;
     play = false;
-      return  fetchAudio(`https://p.scdn.co/mp3-preview/e0c72d148c26dd4d17d85f573f97a1bb60c4f244?cid=e666d111cbeb49f897e1a05352690b42`, musicTime);
+      return  fetchAudio(Url, musicTime);
     //return reproducirAudio(musicTime);
   }
   async function fetchAudio(url, flow = 0) {
@@ -168,7 +178,13 @@ function audio( music) {
          //console.log(flow);
         let timeCache = musicTime;
         gettFrecuency = setInterval(() => {
-                  musicTime == 0 ?  clearInterval(gettFrecuency) : musicTime = timeCache--;
+                  if(musicTime == 0){
+                    stop = false;
+                    play = true;  
+                    clearInterval(gettFrecuency);
+                  }else{
+                    musicTime = timeCache--
+                  }
                   //console.log(musicTime);
                   let bufferLength = analizador.frequencyBinCount;  
                   let dataArray = new Uint8Array(bufferLength);
@@ -190,25 +206,6 @@ function createWave(container, heightNode = "10%") {
     fragment.appendChild(nodechild);
     container.appendChild(fragment)
   }
-  function getData() {
-    source = audioCtx.createBufferSource();
-    var request = new XMLHttpRequest();
-    request.open('GET', 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3', true);
-    request.responseType = 'arraybuffer';
-    request.onload = function() {
-      var audioData = request.response;
-      audioCtx.decodeAudioData(audioData, function(buffer) {
-          source.buffer = buffer;
-          source.connect(audioCtx.destination);
-          source.loop = true;
-        },
-        function(e){ console.log("Error with decoding audio data" + e.err); });
-    }
-    request.send();
-  }
-  //fetchAudio(`https://s3-us-west-2.amazonaws.com/s.cdpn.io/222579/Kevin_MacLeod_-_Camille_Saint-Sans_Danse_Macabre_-_Finale.mp3`);
-
-  
 window.onload = function() {
     if (localStorage.getItem("TokenCode")) {
         document.getElementById("Loggin").style.display = "none";
@@ -217,7 +214,9 @@ window.onload = function() {
     }
     //console.log(window.location.hash);
     restartToken(window.location.hash);
-   
+    const Tokken = localStorage.getItem("TokenCode");
+    FetchArtistFollow(4, Tokken);
+    FetchRecentlyPlayed(4, Tokken);
     //localStorage.setItem("TokenCode", "12");
   };
     // private methods
@@ -234,11 +233,11 @@ window.onload = function() {
         return data.access_token;
     };
 
-    function FetchArtistFollow() {
-       let data =  fetch("https://api.spotify.com/v1/me/following?type=artist&limit=6", {
+    function FetchArtistFollow(limit=4 , Tokken) {
+      return fetch(`https://api.spotify.com/v1/me/following?type=artist&limit=${limit}`, {
                         method: "GET",
                         headers: {                  
-                          Authorization: `Bearer BQCSttn_AUuc_xh9u4VCzsPTOzLtufq9UtHTlm3tKxtoxhqE9ochc6rx9kS4zxNcWViKDS2JvsHMinbrz0ZfhjdjPVncvNazuBTdGP2PPXXg5VSX4wel0LuIcA2Fr2_vzRL69K1Qsr4PdLbjM7EjsQqkwMN1lRSM09VInEujd-tXJOoerMZYRJhmldADoQ3jqveZcVB0d6fZeHOZ`
+                          Authorization: `Bearer ${Tokken}`
                         }
                       }
                     )
@@ -249,81 +248,93 @@ window.onload = function() {
                 let Img = iterator.images[2].url;
                 let Tittle =iterator.name;
                 let Description = iterator.genres;
-                paintFollowArtis(Img, Tittle, "Description")
+                paintBlocks("ArtistsFollowed",Img, Tittle, Description, null, null, null)
                 //console.log(iterator.genres);
           }
       })
       )
-      return data;
     }
-  function paintFollowArtis(img, Tittle, Description) {
-
-    const NodeArtistsFollowed =document.getElementById("ArtistsFollowed");
-
-
+    function FetchRecentlyPlayed(limit=3 , Tokken) {
+      return fetch(`https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`, {
+                        method: "GET",
+                        headers: {                  
+                          Authorization: `Bearer ${Tokken}`
+                        }
+                      }
+                    )
+      .then(res => res.ok ? Promise.resolve(res): Promise.reject(res))    
+      .then(res => res.json()
+      .then(res => {
+          for (const iterator of res.items) {
+                let artists = [];
+                let Img = iterator.track.album.images[1].url;
+                //let Tittle =iterator;
+                let Description = iterator.track.name;
+                //paintFollowArtis(Img, Tittle, Description)
+                //console.log(iterator.genres);
+                for (const artist of iterator.track.artists) {
+                  artists.push(artist.name);
+                }
+                let UrlPlay = iterator.track.preview_url;
+                let Id = iterator.track.id;
+               
+                paintBlocks("RecentlyPlayed", Img, artists, Description, true, UrlPlay, Id)
+          }
+      })
+      )
+    }
+  function paintBlocks(Nodo=null,img, Tittle, Description = [], button = null, Play = null, Id= null) {
+    const NodeArtistsFollowed =document.getElementById(Nodo);
     const FrgmntArtist = document.createDocumentFragment();
     const FrgmntTittle = document.createDocumentFragment();
     const FrgmntDescription = document.createDocumentFragment();
-
-
-    
     const FrgmnButtonOption = document.createDocumentFragment();
     const FrgmntOption = document.createDocumentFragment();
-
     const MusicDiv = document.createElement("div");
         MusicDiv.classList.add("music");
-
         const newImage = document.createElement('img');
           newImage.setAttribute('src', img);
           newImage.classList.add('music__image');
-
         const DescriptionDiv = document.createElement("div");
               DescriptionDiv.classList.add("music__description");
         const TittleDescr = document.createElement("div");
         TittleDescr.setAttribute("class", "music__description--tittle");
-
         const TittleContent= document.createElement("SPAN");
           TittleContent.classList.add("description__tittle--name");
           TittleContent.textContent= Tittle;
-
         const DescriptionContent = document.createElement("SPAN");
           DescriptionContent.classList.add("description__tittle--artist");
-          DescriptionContent.textContent=Description;
-
+          DescriptionContent.textContent=Description.toString();
           FrgmntTittle.appendChild(TittleContent);
           FrgmntTittle.appendChild(DescriptionContent);
-
         TittleDescr.appendChild(FrgmntTittle);
-
         DescriptionDiv.appendChild(newImage);
         DescriptionDiv.appendChild(TittleDescr);
-        
         FrgmntDescription.appendChild(DescriptionDiv);
-      
-        
-
-
         /* Node music Option */
       const MusicOption = document.createElement("div");
         MusicOption.classList.add("music__option");
-
       const BtnOption = document.createElement("A");
         BtnOption.classList.add("icon__music", "icon__music-points");
-      
+
+        if(button){
+          const BtnPlay = document.createElement("A");
+            BtnPlay.setAttribute("url", Play);
+            BtnPlay.setAttribute("id", Id);
+            BtnPlay.classList.add("icon__music", "icon__music--play");
+            
+            BtnPlay.setAttribute("href", "#");
+            
+            FrgmnButtonOption.appendChild(BtnPlay);
+        }
         FrgmnButtonOption.appendChild(BtnOption);
       MusicOption.appendChild(FrgmnButtonOption);
-
       MusicDiv.appendChild(FrgmntDescription);
       MusicDiv.appendChild(MusicOption);
-      
-     
-        
-      
       FrgmntArtist.appendChild(MusicDiv);
-
         //Adding to div Principal
         NodeArtistsFollowed.appendChild(FrgmntArtist);
   }
 //getToken();
 
-FetchArtistFollow();
+
