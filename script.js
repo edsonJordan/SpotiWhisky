@@ -152,7 +152,7 @@ document.getElementById("icon__play").addEventListener("change", (e) => {
    
 }
 );
-const CLIENT_ID = "e666d111cbeb49f897e1a05352690b42"; // insert your client id here from spotify
+const CLIENT_ID = "194749ef76664a5e902ddee34d4c8b73"; // insert your client id here from spotify
 const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
 const REDIRECT_URL_AFTER_LOGIN = "https://edsonjordan.github.io/SpotiWhisky/";//https://edsonjordan.github.io/SpotiWhisky/
 const SPACE_DELIMITER = "%20";
