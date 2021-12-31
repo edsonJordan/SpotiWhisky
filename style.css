@@ -519,9 +519,10 @@ ul{
     justify-content: space-evenly;
     height: 100%;
     width: 100%;
-    row-gap: 15px;
-    min-width: calc(100vw);
+    row-gap: 20px;
+    min-width: 100%;
     scroll-snap-align: center;
+    
 }
 
 .card__image{
@@ -536,6 +537,7 @@ ul{
     border-radius: 2.5rem;
 }
 .card__description{
+    width: 90%;
     text-align: center;
     color: var(--color-white);
 }
@@ -581,7 +583,19 @@ ul{
     padding: .9rem;
     border-radius: 100%;
 }
-.music__svg{
+.reproductor__option--previous{
+    background-image: url(icons/previous.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+
+}
+.reproductor__option--next{
+    background-image: url(icons/next.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    
+}
+/* .music__svg{
     fill: var(--color-white);
 }
 .music__next{
@@ -590,6 +604,10 @@ ul{
 .option__icon:hover .music__svg{
     fill: url(#MyGradient);
 }
+
+.option__icon:hover .music__svg{
+    fill: url(#PreviousGradient);
+} */
 .option__icon--play{
     cursor: pointer;
     display: block;

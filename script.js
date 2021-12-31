@@ -3,7 +3,19 @@
 //https://www.youtube.com/watch?v=41xCGwVI498&ab_channel=SoyDalto
 //https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData#new_promise-based_syntax
 //https://developer.spotify.com/console/put-play/
-
+const CLIENT_ID = "194749ef76664a5e902ddee34d4c8b73"; // insert your client id here from spotify
+const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
+const REDIRECT_URL_AFTER_LOGIN = "https://edsonjordan.github.io/SpotiWhisky/";//https://edsonjordan.github.io/SpotiWhisky/
+const SPACE_DELIMITER = "%20";
+const SCOPES = ["user-read-currently-playing",
+"user-read-playback-state",
+"playlist-read-private", 
+"user-read-playback-position",
+"user-read-recently-played",
+"user-library-read",
+"user-follow-read",
+"user-top-read"];
+const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
 //Event Listener Icon Search Words Key
 document.getElementById('search-icon').addEventListener('change', (e) => {
   const searchInput = document.getElementById('search-input');
@@ -16,7 +28,7 @@ document.getElementById('search-icon').addEventListener('change', (e) => {
 document.getElementById("input-search")?.addEventListener("keyup", (e) => {
   const Tokken = localStorage.getItem("TokenCode");
     let NodeContainerSearch = document.getElementById("container__search").className;
-    if(NodeContainerSearch.indexOf("none") !== -1) {document.getElementById("container__search").classList.remove("none");}
+    if(NodeContainerSearch.indexOf("none") !== -1) document.getElementById("container__search").classList.remove("none");
    
     if(e.target.value.length > 3 ){
       let word = e.target.value;
@@ -47,6 +59,8 @@ document.getElementById("ul__navigation").addEventListener("click", (e) => {
         marker.style.top = (lat-2) + "px";
     }
 });
+
+
 /* Events clicks More data  */
 document.querySelectorAll(".icon__view--more").forEach(point => {
     point.addEventListener("click", (e) => {
@@ -87,11 +101,53 @@ document.getElementById("back").addEventListener("click", (e) => {
       stop = false;
       play = true;  
        detenerAudio();
-       clearInterval(gettFrecuency);
-        clearInterval(runMusic);
-       clearInterval(ProgresFrecuency);
     }
+    ListMusic =  {};
+    PositionMusic = 0;
     document.getElementById("reproductor").classList.toggle("none");
+});
+//Event Listener Click Play RecentlyPlayed
+document.getElementById("RecentlyPlayed").addEventListener("click", (e) => {
+  e.preventDefault();
+  //console.log(typeof(e.target.className));
+  let ClassName =e.target.className;
+  let PositionMusic= 0;
+  ListMusic =  {};
+  if(ClassName.indexOf("icon__music--play") !== -1){
+    if(stop) {
+      stop = true;
+      play = false;  
+    }
+    
+    
+    document.getElementById("reproductor").classList.toggle("none");
+  //time = audioCtx.currentTime;
+    const MusicUrl = e.target.getAttribute('url');
+    const MusicId = e.target.id;
+    const InputChecket = document.getElementById("icon__play");
+    if(InputChecket.checked = true){
+      InputChecket.setAttribute("checked", false)
+    }
+    
+    audio(MusicId, MusicUrl);
+
+    document.getElementById("reproductor__cards").innerHTML="";
+    const Id = e.target.getAttribute('id');
+    const Tittle = e.target.getAttribute('attr-tittle');
+    const Description = e.target.getAttribute('attr-description');
+    const Image = e.target.getAttribute('attr-img');
+    const Url = e.target.getAttribute('url');
+    //ListMusic = ListMusic.push([{musi:MusicId, url:MusicUrl, position:PositionMusic}]);}
+    ListMusic[PositionMusic]= {CodeMusic:MusicId, UrlMusic:MusicUrl, PositionMusic:PositionMusic};
+
+    const BtnPrevious = document.getElementById("btn-previous");
+    const BtnNext = document.getElementById("btn-next");
+    BtnPrevious.setAttribute("href", `#`);
+    BtnNext.setAttribute("href", `#`);
+
+    PaintReproductorCards("reproductor__cards", Image, Tittle, Description,Id);
+ 
+  }
 });
 //Event Listener Click container search
 document.getElementById("container__search").addEventListener("click", (e) => {
@@ -105,11 +161,14 @@ document.getElementById("container__search").addEventListener("click", (e) => {
     }
     document.getElementById("reproductor").classList.toggle("none");
   //time = audioCtx.currentTime;
-    
     const MusicId = e.target.id;
-    
-    audio(MusicId, MusicUrl);
 
+
+    const InputChecket = document.getElementById("icon__play");
+    if(InputChecket.checked = true){
+      InputChecket.setAttribute("checked", false)
+    }
+    audio(MusicId, MusicUrl);
     document.getElementById("reproductor__cards").innerHTML="";
     const Id = e.target.getAttribute('id');
     const Tittle = e.target.getAttribute('attr-tittle');
@@ -117,56 +176,171 @@ document.getElementById("container__search").addEventListener("click", (e) => {
     const Image = e.target.getAttribute('attr-img');
     const Url = e.target.getAttribute('url');
 
-    //Nodo=null,img, Tittle, Description = [], Id= null
+    ListMusic[PositionMusic]= {CodeMusic:MusicId, UrlMusic:MusicUrl, PositionMusic:PositionMusic};
+    //Buttons Arrow Next and Previous
+    const BtnPrevious = document.getElementById("btn-previous");
+    const BtnNext = document.getElementById("btn-next");
+    BtnPrevious.setAttribute("href", `#`);
+    BtnNext.setAttribute("href", `#`);
     PaintReproductorCards("reproductor__cards", Image, Tittle, Description,Id);
   }
 });
-//Event Listener Click Play RecentlyPlayed
-document.getElementById("RecentlyPlayed").addEventListener("click", (e) => {
-  e.preventDefault();
+//Event Listener Click Play PlayList from ArtistFollowed
+document.getElementById("ArtistsFollowed").addEventListener("click", (e) => {
 
-  //console.log(typeof(e.target.className));
+  let ClassName =e.target.className;
+  let FirstAudio = false;
+  if(ClassName.indexOf("icon__music--play") !== -1){
+    e.preventDefault();
+    
+
+    
+    const IdArtist= e.target.getAttribute('id');
+    const Tokken = localStorage.getItem("TokenCode");
+    //console.log(IdArtist);
+    document.getElementById("reproductor__cards").innerHTML="";
+
+    const InputChecket = document.getElementById("icon__play");
+    if(InputChecket.checked = true){
+      InputChecket.setAttribute("checked", false)
+    }
+    
+    if(screen.width<768){
+      document.getElementById("reproductor").classList.remove("none");
+    }
+    
+    
+    if(stop) {
+      stop = true;
+      play = false;  
+    }
+    ListMusic =  {};
+    PositionMusic = 0;
+    
+    //detenerAudio();
+    
+    FetchArtistTrack(IdArtist, Tokken);  
+    
+    //btn_next.setAttribute("href", `${IdArtist}`);
+    //btn-next
+    //audio(MusicId, MusicUrl);  
+  }
+});
+//Event Listener Click Play track from PlayList
+document.getElementById("RecentlyPlayList").addEventListener("click", (e) => {
   let ClassName =e.target.className;
   if(ClassName.indexOf("icon__music--play") !== -1){
-    document.getElementById("reproductor").classList.toggle("none");
-  //time = audioCtx.currentTime;
-    const MusicUrl = e.target.getAttribute('url');
-    const MusicId = e.target.id;
-    audio(MusicId, MusicUrl);
+    e.preventDefault();
+    const IdArtist= e.target.getAttribute('id');
+    const Tokken = localStorage.getItem("TokenCode");
 
     document.getElementById("reproductor__cards").innerHTML="";
-    const Id = e.target.getAttribute('id');
-    const Tittle = e.target.getAttribute('attr-tittle');
-    const Description = e.target.getAttribute('attr-description');
-    const Image = e.target.getAttribute('attr-img');
-    const Url = e.target.getAttribute('url');
+    const InputChecket = document.getElementById("icon__play");
+    if(InputChecket.checked = true){
+      InputChecket.setAttribute("checked", false)
+    }
+    if(screen.width<768){
+      document.getElementById("reproductor").classList.remove("none");
+    }
+    if(stop) {
+      stop = true;
+      play = false;  
+    }
+    ListMusic =  {};
+    PositionMusic = 0;
+    FetchPlayListTracks(IdArtist, 15, Tokken, 0);
+   /*  
+    //console.log(IdArtist);
+    document.getElementById("reproductor__cards").innerHTML="";
 
-    //Nodo=null,img, Tittle, Description = [], Id= null
-    PaintReproductorCards("reproductor__cards", Image, Tittle, Description,Id);
+    const InputChecket = document.getElementById("icon__play");
+    if(InputChecket.checked = true){
+      InputChecket.setAttribute("checked", false)
+    }
+    
+    if(screen.width<768){
+      document.getElementById("reproductor").classList.remove("none");
+    } */
+
+    //FetchArtistTrack(IdArtist, Tokken);  
+    
+    //btn_next.setAttribute("href", `${IdArtist}`);
+    //btn-next
+    //audio(MusicId, MusicUrl);  
   }
 });
+//Event Listener Click on Buttons Next and Previous
+document.querySelectorAll(".reproductor__option--arrow").forEach(element => {
+  element.addEventListener("click", (e) => {
+    const NodeName = e.target.className;
+    let IconPlay = document.getElementById("icon__play");
+    const BtnPrevious = document.getElementById("btn-previous");
+    const BtnNext = document.getElementById("btn-next");
+    if(BtnPrevious.getAttribute("href") == "#" && BtnNext.getAttribute("href") == "#") return false
 
+    switch (true) {      
+      case NodeName.indexOf("reproductor__option--previous") !== -1:
+      detenerAudio();
+      PositionMusic--;  
+      if(PositionMusic === -1) PositionMusic = 0;
+      if(IconPlay.checked = true){
+        IconPlay.setAttribute("checked", false)
+      }
+      stop = false;
+      play = true;
+      audio(ListMusic[(PositionMusic)].CodeMusic, ListMusic[(PositionMusic)].UrlMusic);
+      BtnPrevious.setAttribute("href", `#link${ListMusic[(PositionMusic)].CodeMusic}`);
+      BtnNext.setAttribute("href", `#link${ListMusic[(PositionMusic+1)].CodeMusic}`);
+      
+        break;
+
+
+      case NodeName.indexOf("reproductor__option--next") !== -1:
+      detenerAudio();
+      PositionMusic++;
+      if(PositionMusic == Object.keys(ListMusic).length ){
+        PositionMusic--
+      } 
+      if(IconPlay.checked = true){
+        IconPlay.setAttribute("checked", false)
+      }
+      stop = false;
+      play = true;
+      audio(ListMusic[(PositionMusic-1)].CodeMusic, ListMusic[PositionMusic].UrlMusic);
+      BtnPrevious.setAttribute("href", `#link${ListMusic[(PositionMusic-1)].CodeMusic}`);
+      BtnNext.setAttribute("href", `#link${ListMusic[(PositionMusic)].CodeMusic}`);
+
+      
+          break;
+      }
+      removeParamrUrl();
+
+  });
+});
+//Event Listener Click Option Arrow from Reproductor
+document.getElementById("reproductor__option").addEventListener("click", (e) => {
+  if(e.target.className == "reproductor__option--arrow"){
+    console.log("click");
+  }
+});
 //Event Listener Icon Play to Reproductor
 document.getElementById("icon__play").addEventListener("change", (e) => {
     //document.getElementById("reproductor__cards").innerHTML="";
+   //console.log(ListMusic);
+   const IconPlay = document.getElementById("icon__play");
+   if(ListMusic[0] === undefined ) {
+     
+    return true;
+   }
+    (IconPlay.checked)? IconPlay.setAttribute("checked", false) : true;
+
+    const CodMusic = ListMusic[(PositionMusic)].CodeMusic;
+    const UrlMusic = ListMusic[(PositionMusic)].UrlMusic;
+    audio(CodMusic, UrlMusic);
+   
    
 }
 );
-const CLIENT_ID = "194749ef76664a5e902ddee34d4c8b73"; // insert your client id here from spotify
-const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
-const REDIRECT_URL_AFTER_LOGIN = "https://edsonjordan.github.io/SpotiWhisky/";//https://edsonjordan.github.io/SpotiWhisky/
-const SPACE_DELIMITER = "%20";
-const SCOPES = ["user-read-currently-playing",
-"user-read-playback-state",
-"playlist-read-private", 
-"user-read-playback-position",
-"user-read-recently-played",
-"user-library-read",
-"user-follow-read",
-"user-top-read"];
-const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
-
-
 const getReturnedParamsFromSpotifyAuth = (hash) => {
     const stringAfterHashtag = hash.substring(1);
     const paramsInUrl = stringAfterHashtag.split("&");
@@ -178,6 +352,7 @@ const getReturnedParamsFromSpotifyAuth = (hash) => {
     return paramsSplitUp;
   };
 function restartToken(hash) {
+  if(hash.length<70) return
     if (hash) {
             const { access_token } =
             getReturnedParamsFromSpotifyAuth(hash);
@@ -214,17 +389,11 @@ let ProgressValue=0;
 let LastArtistsFollowed ;
 let PlayList = 0;
 
+//Variables para el reproductor
+let ListMusic =  Object();
+let PositionMusic = 0;
+let ArrowPlay = false;
 //var DurationBuffer= null;
-
-/* points?.forEach(point => {point.addEventListener('click', (e)=> {
-    document.getElementById("reproductor").classList.toggle("none");
-    //time = audioCtx.currentTime;
-    const music = e.target.getAttribute('cod-music');
-    console.log();
-    audio(music);
-    //button.play();
-  })
-}) */
 function detenerAudio() {
   fuenteDeReproduccion.stop();
   clearInterval(gettFrecuency);
@@ -280,38 +449,6 @@ function audio(music, Url) {
         let Progress= musicTime * 1000;
         let TotalProgress =  (Math.trunc(fuenteDeReproduccion.buffer.duration) * 1000);
         const NodeProgress = document.getElementById("ProgressBar");
-        /* ProgresFrecuency = setInterval(() => {
-          if(Progress == 0) return clearInterval(ProgresFrecuency);
-            Progress = Progress-100;
-          //console.log("Progreso conteo " + Progress);
-          if(Progress % (TotalProgress/100) === 0){
-            ProgressValue++;
-            //console.log(ProgressValue);
-            NodeProgress.setAttribute("value", ProgressValue);
-          }
-        } , 100); */
-
-
-
-        /* gettFrecuency = setInterval(() => {
-          Progress = Progress-100;
-          if(Progress == 0){
-            stop = false;
-            play = true;  
-            clearInterval(gettFrecuency);
-          }
-          let bufferLength = analizador.frequencyBinCount;  
-          let dataArray = new Uint8Array(bufferLength);
-                  //drawVisual = window.requestAnimationFrame(foto);
-          analizador.getByteTimeDomainData(dataArray);
-          let percentage = (((( ( (Math.max.apply(null, dataArray))).toFixed(2)/ 128  )* 100)- 100).toFixed(0)+ "%");
-          let NumberPercentage = (Progress/1000)
-          if(Number.isInteger(NumberPercentage)){
-            //console.log("Progreso "+Progress);
-            createWave(containerwaves, percentage);
-          }           
-                    
-        } , 100); */
         
         gettFrecuency = setInterval(() => {
                   Progress = Progress-100
@@ -325,7 +462,10 @@ function audio(music, Url) {
                     stop = false;
                     play = true;  
                     ProgressValue = 0;
-                    
+                    const InputChecket = document.getElementById("icon__play");
+                      if(InputChecket.checked = false){
+                        InputChecket.setAttribute("checked", true)
+                        }
                     clearInterval(gettFrecuency);
                   }
                   musicTime = Progress;
@@ -356,6 +496,12 @@ function createWave(container, heightNode = "10%") {
     container.appendChild(fragment)
   }
   let DataUserApi ;
+
+  function removeParamrUrl(){
+    const nextURL = REDIRECT_URL_AFTER_LOGIN;
+    var url=document.location.href;
+  return history.replaceState('',null,nextURL);;
+  }
 window.onload = function() {
     /* if (localStorage.getItem("TokenCode")) {
         document.getElementById("Loggin").style.display = "none";
@@ -363,14 +509,18 @@ window.onload = function() {
         document.getElementById("Loggin").style.display = "flex";
     } */
     //console.log(window.location.hash);
+    
     restartToken(window.location.hash);
-    const Tokken = localStorage.getItem("TokenCode");
+    let Tokken = localStorage.getItem("TokenCode");
     FetchArtistFollow(4, Tokken, 0);
     FetchRecentlyPlayed(10, Tokken, null);
     FetchPlayList(3, 4, Tokken);
     //FetchArUserData(Tokken);
   };
 
+
+    //Remove parameter anchor from url
+    
     // private methods
     const getToken = async () => {
         const result = await fetch('https://accounts.spotify.com/api/token', {
@@ -399,16 +549,60 @@ window.onload = function() {
                 let Img = iterator.images[2].url;
                 let Tittle =iterator.name;
                 let Description = iterator.genres;
-                paintBlocks("ArtistsFollowed",Img, Tittle, Description, null, null, null)
+                let Id = iterator.id;
+                //
+                /* let UrlPlay = iterator.track.preview_url;
+                     */
+                paintBlocks("ArtistsFollowed",Img, Tittle, Description, true, null, Id)
                 //console.log(iterator.genres); 
                LastArtistsFollowed= iterator.id;
-               
           }
           document.getElementById("Loggin").style.display = "none";
         }))
       .catch(res => {
          console.log(res);
       })
+    }
+    function FetchArtistTrack(IdArtist, Tokken) {
+                    return fetch(`https://api.spotify.com/v1/artists/${IdArtist}/top-tracks?market=ES`, {
+                      method: "GET",
+                      headers: {                  
+                        Authorization: `Bearer ${Tokken}`
+                      }
+                    }
+                  )
+              .then(res => res.ok ? Promise.resolve(res): Promise.reject(res))    
+              .then(res => res.json()
+              .then(res => {
+                ListMusic={};
+                  const btn_next = document.getElementById("btn-next");
+                  const btn_previous = document.getElementById("btn-previous");
+                  let CountPosition = 0;
+                    for (const iterator of res.tracks) {                      
+                      let Tittle =iterator.name;
+                      let Img = iterator.album.images[0].url
+                      let Description = iterator.album.name;
+                      let IdMusic = iterator.id;
+                      let UrlPlay = iterator.preview_url; 
+                      ListMusic[CountPosition]= {CodeMusic:IdMusic, UrlMusic:UrlPlay, PositionMusic:CountPosition};
+                      
+                      /* if(CountPosition == 0) {                        
+                        btn_previous.setAttribute("href", `#link${IdMusic}`);
+                      } */
+                      if(CountPosition == 0) {
+                        btn_previous.setAttribute("href", `#link${IdMusic}`);                       
+                      }
+                      if(CountPosition == 1) {
+                        btn_next.setAttribute("href", `#link${IdMusic}`);
+                      }
+                      CountPosition++
+                      PaintReproductorCards("reproductor__cards", Img, Tittle, Description,IdMusic);                                             
+                    }                                    
+                    audio(ListMusic[0].CodeMusic, ListMusic[0].UrlMusic);
+              }))
+              .catch(res => {
+                      console.log(res);
+              })
     }
     function FetchRecentlyPlayed(limit=3 , Tokken, after = null) {  
       let url = !after? `https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`
@@ -453,7 +647,7 @@ window.onload = function() {
             .then(res => res.ok ? Promise.resolve(res): Promise.reject(res))    
             .then(res => res.json()
             .then(res => {
-              const UserId = res.id;
+              //const UserId = res.id;
               let url = !offset? `https://api.spotify.com/v1/me/playlists?limit=${limit}`
                   : `https://api.spotify.com/v1/me/playlists?limit=${limit}&offset=${offset}`;;
                      return fetch(url, {
@@ -467,7 +661,8 @@ window.onload = function() {
                         let Img = iterator.images[0].url;
                         let Tittle =iterator.name;
                         let Description = iterator.description;
-                        paintBlocks("RecentlyPlayList",Img, Tittle, Description, null, null, null)
+                        let IdPlayList = iterator.id;
+                        paintBlocks("RecentlyPlayList",Img, Tittle, Description, true, null, IdPlayList)
                         PlayList++;
                         }
                       })
@@ -483,6 +678,44 @@ window.onload = function() {
               console.log(res);
            })
             
+    }
+    function FetchPlayListTracks(IdPlayList, limit=null, Tokken, offset = 0) {
+              return fetch(`https://api.spotify.com/v1/playlists/${IdPlayList}/tracks?market=ES&fields=items(track(id%2Cname%2Cpreview_url%2Calbum(name%2Cimages%2Chref)))&limit=${limit}&offset=${offset}`, {
+                method: "GET",
+                headers: {                  
+                  Authorization: `Bearer ${Tokken}`
+                }
+              }
+            )
+        .then(res => res.ok ? Promise.resolve(res): Promise.reject(res))    
+        .then(res => res.json()
+        .then(res => {
+          ListMusic={};
+            const btn_next = document.getElementById("btn-next");
+            const btn_previous = document.getElementById("btn-previous");
+            let CountPosition = 0;
+              for (const iterator of res.items) {             
+                let Tittle =iterator.track.album.name;
+                let Description =iterator.track.name;
+                let Img = iterator.track.album.images[1].url;
+                let IdMusic = iterator.track.id;
+                let UrlPlay = iterator.track.preview_url; 
+
+                ListMusic[CountPosition]= {CodeMusic:IdMusic, UrlMusic:UrlPlay, PositionMusic:CountPosition};
+                if(CountPosition == 0) {
+                  btn_previous.setAttribute("href", `#link${IdMusic}`);                       
+                }
+                if(CountPosition == 1) {
+                  btn_next.setAttribute("href", `#link${IdMusic}`);
+                }
+                CountPosition++
+                PaintReproductorCards("reproductor__cards", Img, Tittle, Description,IdMusic);                                                        
+              }                            
+              audio(ListMusic[0].CodeMusic, ListMusic[0].UrlMusic);
+        }))
+        .catch(res => {
+                console.log(res);
+        })
     }
     function SearchWord(Tokken, word = null) {
         return fetch(`https://api.spotify.com/v1/search?q=${word}&type=track&limit=20&offset=0`, {
@@ -517,7 +750,7 @@ window.onload = function() {
         document.getElementById("Loggin").style.display = "flex";
      })
     }
-  function paintBlocks(Nodo=null,img, Tittle, Description = [], button = null, Play = null, Id= null) {
+  function paintBlocks(Nodo=null,img, Tittle, Description = [], button = false, Play = null, Id= null) {
     const NodoContainer =document.getElementById(Nodo);
     
     const FrgmntArtist = document.createDocumentFragment();
@@ -550,7 +783,6 @@ window.onload = function() {
         MusicOption.classList.add("music__option");
       const BtnOption = document.createElement("A");
         BtnOption.classList.add("icon__music", "icon__music-points");
-
         if(button){
           const BtnPlay = document.createElement("A");
             BtnPlay.setAttribute("url", Play);
@@ -570,7 +802,6 @@ window.onload = function() {
         //Adding to div Principal
         NodoContainer.appendChild(FrgmntArtist);
   }
-
   function PaintReproductorCards(Nodo=null,img, Tittle, Description = [], Id= null){
     const NodoContainer =document.getElementById(Nodo);
     const FrgmnCardDescription = document.createDocumentFragment();
@@ -611,6 +842,7 @@ window.onload = function() {
         DivCardDescription.appendChild(FrgmnCardDescription);
         const DivCard = document.createElement("div");
         DivCard.classList.add("card");
+        DivCard.setAttribute("id", `link${Id}`);
         DivCard.appendChild(DivCardImg);
         DivCard.appendChild(DivCardDescription);
         NodoContainer.appendChild(DivCard);
