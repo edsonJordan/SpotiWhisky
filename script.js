@@ -16,6 +16,12 @@ const SCOPES = ["user-read-currently-playing",
 "user-follow-read",
 "user-top-read"];
 const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
+
+//Event listener icon Sign out
+document.getElementById("Sign_out").addEventListener("click", function() {
+    localStorage.clear();
+    window.location.href = REDIRECT_URL_AFTER_LOGIN;
+  });
 //Event Listener Icon Search Words Key
 document.getElementById('search-icon').addEventListener('change', (e) => {
   const searchInput = document.getElementById('search-input');
